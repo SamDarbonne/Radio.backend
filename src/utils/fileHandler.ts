@@ -35,12 +35,16 @@ export const processSongs = async (files: Express.Multer.File[]) => {
     const common = metadata.common;
 
     // Handle artists
-    const artistNames = common.artist
-      ? common.artist.split(",")
-      : ["Unknown Artist"];
+    const artistNames = common.artists
+      ?.reduce<string[]>((acc, artist) => acc.concat(artist.split(", ")), [])
+      .reduce<string[]>(
+        (acc, artist) => acc.concat(artist.split(" & ")),
+        []
+      ) ?? ["Unknown Artist"];
+
     const artistIds: ObjectId[] = (await Promise.all(
       artistNames.map(async (name) => {
-        const artistName = name.trim();
+        const artistName = name?.trim();
         let artist: IArtist | null = await Artist.findOne({ name: artistName });
         if (!artist) {
           try {
@@ -65,7 +69,7 @@ export const processSongs = async (files: Express.Multer.File[]) => {
       let album: IAlbum | null = await Album.findOne({ name: albumName });
       if (!album) {
         try {
-          album = new Album({ name: albumName, artist: artistIds[0] });
+          album = new Album({ name: albumName, artists: artistIds });
           await album.save();
 
           // Save album image
@@ -87,6 +91,8 @@ export const processSongs = async (files: Express.Multer.File[]) => {
             throw error;
           }
         }
+      } else {
+        // Check if artist is in the album artists
       }
       albumId = album!._id as ObjectId;
     }

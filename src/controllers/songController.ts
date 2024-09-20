@@ -8,7 +8,7 @@ export const getSongs = async (req: Request, res: Response) => {
   const limit = 10;
   const songs = await Song.find({})
     .populate({ path: "artists", select: "name" })
-    .populate({ path: "album", select: "name" })
+    .populate({ path: "album", select: { name: 1, imageFilename: 1 } })
     .skip((page - 1) * limit)
     .limit(limit);
   const totalDocuments = await Song.countDocuments();
