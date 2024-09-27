@@ -93,6 +93,14 @@ export const processSongs = async (files: Express.Multer.File[]) => {
         }
       } else {
         // Check if artist is in the album artists
+        const albumArtists = album.artists.map((id) => id.toString());
+        const newArtists = artistIds.filter(
+          (id) => !albumArtists.includes(id.toString())
+        );
+        if (newArtists.length) {
+          album.artists = [...album.artists, ...newArtists];
+          album.save();
+        }
       }
       albumId = album!._id as ObjectId;
     }

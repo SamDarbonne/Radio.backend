@@ -10,6 +10,7 @@ export interface IArtist extends Document {
 export interface IAlbum extends Document {
   name: string;
   artists: ObjectId[];
+  songs: ObjectId[] | ISong[];
   releaseDate: Date;
   lastPlayed?: Date;
   imageFilename?: string;

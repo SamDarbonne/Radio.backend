@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Song } from "../models/song";
 import { processSongs } from "../utils/fileHandler";
 import { playSong } from "../utils/mediaPlayer";
+import { Album } from "../models/album";
 
 export const getSongs = async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string) || 1;
@@ -26,6 +27,19 @@ export const createSongs = async (req: Request, res: Response) => {
   const songsData = await processSongs(files);
 
   const songs = await Song.insertMany(songsData);
+
+  const albumUpdates = songs
+    .filter((song) => song.album)
+    .map(async (song) => {
+      await Album.findByIdAndUpdate(
+        song.album,
+        { $addToSet: { songs: song._id } },
+        { new: true, useFindAndModify: false }
+      );
+    });
+  console.log({ albumUpdates });
+  const updatedAlbums = await Promise.all(albumUpdates);
+  console.log({ updatedAlbums });
   res.json(songs);
 };
 
