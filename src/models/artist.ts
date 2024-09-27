@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 import { IArtist } from "../types";
 
 const ArtistSchema = new Schema<IArtist>({
-  name: { type: String, required: true },
+  name: { type: String, required: true, unique: true },
   pseudonyms: [String],
   albums: [{ type: Schema.Types.ObjectId, ref: "Album" }],
   dateAdded: { type: Date, default: Date.now },

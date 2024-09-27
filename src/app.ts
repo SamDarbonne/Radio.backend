@@ -1,5 +1,4 @@
 import express from "express";
-import mongoose from "mongoose";
 import songRoutes from "./routes/songs";
 import artistRoutes from "./routes/artists";
 import albumRoutes from "./routes/albums";

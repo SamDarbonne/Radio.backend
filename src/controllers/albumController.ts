@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import { Album } from "../models/album";
-import { IAlbum, ISong } from "../types";
-import { ObjectId, Types } from "mongoose";
+import { IAlbum, IArtist, ISong } from "../types";
+import { Types } from "mongoose";
 
 export const getAlbumsByArtist: RequestHandler = async (req, res) => {
   try {
@@ -11,25 +11,31 @@ export const getAlbumsByArtist: RequestHandler = async (req, res) => {
     const findQuery = { artists: { $in: [artistId] } };
 
     let albums = await Album.find(findQuery)
-      .populate<{ songs: ISong[] }>("songs")
+      .populate({
+        path: "songs",
+        populate: {
+          path: "artists",
+        },
+      })
       .skip((page - 1) * limit)
       .limit(limit)
+      .lean()
       .exec();
 
     const filteredAlbums = albums.map((album: IAlbum) => {
-      const { songs, ...rest } = album.toObject();
-      const filteredSongs = (songs as ISong[]).filter((song: ISong) =>
-        song.artists.some(
-          (artist: ObjectId) => artist.toString() === artistId.toString()
+      const filteredSongs = (album.songs as ISong[]).filter((song) =>
+        (song.artists as unknown as IArtist[]).some(
+          (artist) => artist._id!.toString() === artistId.toString()
         )
       );
+
       return {
-        ...rest,
+        ...album,
         songs: filteredSongs,
       };
     });
 
-    const totalDocuments = await Album.countDocuments({ findQuery });
+    const totalDocuments = await Album.countDocuments(findQuery);
 
     res.json({
       documents: filteredAlbums,

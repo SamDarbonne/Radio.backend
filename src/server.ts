@@ -4,6 +4,7 @@ const PORT = process.env.PORT || 4000;
 const DB = process.env.DB || "musicdb";
 
 import mongoose from "mongoose";
+
 mongoose
   .connect(`mongodb://localhost:27017/${DB}`, {})
   .then(() => {

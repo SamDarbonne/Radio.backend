@@ -2,7 +2,6 @@ import multer from "multer";
 import path from "path";
 import fs from "fs-extra";
 import { loadMusicMetadata } from "music-metadata";
-import sharp from "sharp";
 import { ISong, IArtist, IAlbum } from "../types";
 import { Artist } from "../models/artist";
 import { Album } from "../models/album";
