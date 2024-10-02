@@ -4,7 +4,7 @@ import { IPlaylist } from "../types";
 const PlaylistSchema = new Schema<IPlaylist>({
   imageFilename: String,
   songs: [{ type: Schema.Types.ObjectId, ref: "Song" }],
-  name: { type: String, required: true },
+  name: { type: String, required: true, unique: true },
   description: String,
   theme: { type: Schema.Types.ObjectId, ref: "Theme" },
 });

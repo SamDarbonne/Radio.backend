@@ -2,6 +2,7 @@ import express from "express";
 import songRoutes from "./routes/songs";
 import artistRoutes from "./routes/artists";
 import albumRoutes from "./routes/albums";
+import playlistRoutes from "./routes/playlists";
 import cors from "cors";
 import path from "path";
 
@@ -16,7 +17,7 @@ app.use("/images", express.static(path.join(__dirname, "..", "images")));
 app.use("/songs", songRoutes);
 app.use("/artists", artistRoutes);
 app.use("/albums", albumRoutes);
-// app.use('/playlists', playlistRoutes);
+app.use("/playlists", playlistRoutes);
 // app.use('/themes', themeRoutes);
 
 export default app;
