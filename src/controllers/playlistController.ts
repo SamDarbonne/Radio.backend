@@ -15,11 +15,6 @@ export const getPlaylists = async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string) || 1;
   const limit = 10;
   const playlists = await Playlist.find({})
-    .populate({
-      path: "songs",
-      select: "name",
-      populate: { path: "artists", select: { name: 1, _id: 1 } },
-    })
     .skip((page - 1) * limit)
     .limit(limit);
   const totalDocuments = await Playlist.countDocuments();
@@ -41,12 +36,12 @@ export const getPlaylist = async (req: Request, res: Response) => {
   }
 
   const playlistAggregation = await Playlist.aggregate([
-    { $match: { _id: new Types.ObjectId(id) } }, // Match the playlist by ID
+    { $match: { _id: new Types.ObjectId(id) } },
     {
       $project: {
         name: 1,
         _id: 1,
-        songs: { $slice: ["$songs", skip, limit] }, // Paginate the songs array
+        songs: { $slice: ["$songs", skip, limit] },
       },
     },
   ]);

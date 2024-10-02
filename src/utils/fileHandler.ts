@@ -36,6 +36,7 @@ export const processSongs = async (files: Express.Multer.File[]) => {
     // Handle artists
     const artistNames = common.artists
       ?.reduce<string[]>((acc, artist) => acc.concat(artist.split(", ")), [])
+      .reduce<string[]>((acc, artist) => acc.concat(artist.split("; ")), [])
       .reduce<string[]>(
         (acc, artist) => acc.concat(artist.split(" & ")),
         []
